@@ -13,10 +13,13 @@
 # 16 the SERVER's version control file is missing, most likely write permission issues
 # 17 the CLIENT's version control file is missing
 
-filenameCheckVersion="Version"
-SERVERCHECKVERSION="https://asher-simcha.github.io/Current-Version/index.html"
+filenameCheckVersion="Version.inf" # CLIENT's version control file
+SERVERCHECKVERSION="https://asher-simcha.github.io/Current-Version/index.html" # SERVER's file
+MAINSITE="https://github.com/Asher-Simcha/Current-Version" # if out of date this is where to go to find the updated program.
+# $MAINSITE you could also pull this from the SERVER's file if you wanted to.
 
 exiting () {
+	# this is a great place to erase tmp files, files, and do your closing of the program.
 	exit $1
 }
 
@@ -48,7 +51,7 @@ checkVersion () {
 	else
 # 		echo "the file does NOT exist:"
 # 		echo "$filenameCheckVersionSERVER"
-		echo "exiting"
+		#echo "exiting"
 		return 16
 	fi
 
@@ -69,8 +72,8 @@ checkVersion () {
 # 		echo "exiting"
 		return 17
 	fi
-	echo "SERVERCURRENTVERSION $SERVERCURRENTVERSION"
-	echo "CLIENTSCURRENTVERSION $CLIENTSCURRENTVERSION"
+	#echo "SERVERCURRENTVERSION $SERVERCURRENTVERSION"
+	#echo "CLIENTSCURRENTVERSION $CLIENTSCURRENTVERSION"
 	if [ "$SERVERCURRENTVERSION" = "$CLIENTSCURRENTVERSION"  ]; then
 # 		echo "The Versions Match"
 		return 0
@@ -89,16 +92,25 @@ checkVersion () {
 
 checkVersion $filenameCheckVersion $SERVERCHECKVERSION
 retval=$?
+# the previous line converted the output $? to a variable named $retval
+
 #echo "the return is: $retval"
+
+# if retrieved value equals zero 
 if [ $retval -eq 0 ]; then
 	echo "Your Version is up to date!:)";
 	exiting 0
-else
+# else if the retrieved value equals 1	
+elif [ $retval -eq 1 ]; then
 	echo "Your Version is out of date.:(";
-	exiting 1
+	echo "Please go to: $MAINSITE"
+	echo "and Update this program"
+	exiting $retval
+# else if the retrieved value is greater than 1	
+elif [ $retval -gt 1 ]; then
+	echo "error code something went wrong"
+	echo "exiting with error code $retval"
+	echo "check notes at top of page or the README.md file."
+	exiting $retval;
 fi;
-
-
-
-
 #EOF
