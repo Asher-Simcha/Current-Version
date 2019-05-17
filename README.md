@@ -1,7 +1,7 @@
 # Current-Version
 Version Control using BASH
 
-With the checkVersion function this will regulate BASH programs to let the use know that a newer version is availalbe.
+With the checkVersion function this will regulate BASH programs to let the user know that a newer version is availalbe.
 
 The program has server exit error codes they are
 * 0   all is well
