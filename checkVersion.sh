@@ -5,6 +5,20 @@
 # Version: 1.0.1
 # Date Modified 05-16-2019
 
+# // filename: checkVersion.sh
+# // Copyright (C) 2019 aka Asher Simcha 
+# // This library is free software; you can redistribute it and/or modify it under the
+# // terms of the The 3-Clause BSD License as published by the
+# // Open Source Initiative; version 3
+# 
+# // This library is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# // The 3-Clause BSD License for more details.
+# 
+# // You should have received a copy of The 3-Clause BSD License
+# // see the files The 3-Clause BSD License.txt respectively.  If not, see
+# // <https://opensource.org/licenses/BSD-3-Clause/>.
 
 # exiting codes
 # 0 both versions match... You have the most uptodate version
