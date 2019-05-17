@@ -75,7 +75,7 @@ checkVersion () {
 		while NOTEOF4='' read -r line || [[ -n "$line" ]]; do
 			let "COUNTVERSION += 1"
 			# NOTE if you wanted you could create a filter here if the server file is more than just one line!
-			# is you look at the source code of the html file, there is only one line, there is NO html headings there.
+			# if you look at the source code of the html file, there is only one line, there is NO html headings there.
 			if [ $COUNTVERSION -eq 1  ]; then
 				CLIENTSCURRENTVERSION=$line
 			fi
