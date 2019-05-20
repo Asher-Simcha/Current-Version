@@ -34,45 +34,48 @@ $message=NULL;
 $filenameCheckVersion="Version.inf";
 $SERVERCHECKVERSION="https://asher-simcha.github.io/help/index.html";
 $MAINSITE="https://github.com/Asher-Simcha/help";
-
+$results=0;
 function checkVersion($filenameCheckVersion, $SERVERCHECKVERSION) {
 	$serverread = NULL;
 	$clientread = NULL;
 	//echo "In function CheckVersion<br>";
-	$thisDate = date('d');
-	//echo "thisDate $thisDate<br>";
-	if ($thisDate == 1 || $thisDate == 10 || $thisDate == 20 || $thisDate == 19) {
-		//echo "Yes it's time to check if your program is uptodate or not<br>";
-		//download the file from the server
-		$serverread = file_get_contents("$SERVERCHECKVERSION"); // download the file from the internet into a variable.
-		$clientread = file_get_contents("$filenameCheckVersion"); // copy the local file into a variable.
-		//echo "serverread $serverread<br>";
-		//echo "clientread $clientread<br>";
-		
-		if ($serverread == NULL) {
-			// Server Location NOT found
-			// exiting
-			return 16;
-		}
-		if ($clientread == NULL) {
-			// Client Configuration file is missing.
-			// exiting
-			return 17;
-		}
-		// now compare the 2 variables to see if they match
-		// strpos ($line, $pattern), so the SERVER is the file to open and Client is the pattern
- 		if (strpos($serverread, $clientread) !== false) {
- 			//echo "found a match";
- 			return 0;
-		} else {
-			//echo "no match found Time to update";
-			// when comparing the 2 files they did not match
-			// it's time to update your program
-			return 1;
- 		}
+
+	//echo "Yes it's time to check if your program is uptodate or not<br>";
+	//download the file from the server
+	$serverread = file_get_contents("$SERVERCHECKVERSION"); // download the file from the internet into a variable.
+	$clientread = file_get_contents("$filenameCheckVersion"); // copy the local file into a variable.
+	//echo "serverread $serverread<br>";
+	//echo "clientread $clientread<br>";
+
+	if ($serverread == NULL) {
+		// Server Location NOT found
+		// exiting
+		return 16;
 	}
+	if ($clientread == NULL) {
+		// Client Configuration file is missing.
+		// exiting
+		return 17;
+	}
+	// now compare the 2 variables to see if they match
+	// strpos ($line, $pattern), so the SERVER is the file to open and Client is the pattern
+	if (strpos($serverread, $clientread) !== false) {
+		//echo "found a match";
+		return 0;
+	} else {
+		//echo "no match found Time to update";
+		// when comparing the 2 files they did not match
+		// it's time to update your program
+		return 1;
+	}
+	
 }
-$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
+$thisDate = date('d');
+//echo "thisDate $thisDate<br>";
+if ($thisDate == 1 || $thisDate == 10 || $thisDate == 20) {
+	// if the date is the 1st 10th or 20th it will check the date
+	$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
+}
 // now the return status if greater than 1 your program is out of date, or something is
 // wrong and you need to update the program
 if ($results >= 1) {
