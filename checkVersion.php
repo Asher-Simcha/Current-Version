@@ -77,7 +77,7 @@ $results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
 // wrong and you need to update the program
 if ($results >= 1) {
 	$message .= "Time to update Your software is out of date!!<br>";
-	$message .= "Please go to: <br>";
+	$message .= "Please go to: $MAINSITE<br>";
 	$message .= "And Update your software";
 } 
 ?>
