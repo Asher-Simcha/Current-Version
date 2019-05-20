@@ -24,11 +24,14 @@
 # // <https://opensource.org/licenses/BSD-3-Clause/>.
 
 # FLAWS
-# I just figured out the if you take out the out check for the $Date1-3
-# date=0101 and the next month is 0201 if $xdays=9 then every month it will want to update
-# if $xdays were to equal lets say 300 then it would check every 3 months.
-	# additional steps would be to change the expiration date of the cookie $COOKIEEXPIRES 
-	# from 31 to 90 or more. 365 is one year 
+# I just figured out that if you take out the $Date1-3 if statement it will still check
+# every month on the first... Because.
+# date=0101 and the next month is date=0201 if $xdays=9 then every month it will want to update
+# these two number are subtracted against each other to figure out how long it has been since 
+# the program last checked for an update.
+# if $xdays were equal to: lets say, 90 then it would check every 3 months.
+	# Additional steps would be to change the expiration date of the cookie $COOKIEEXPIRES 
+	# from 31 to 90 or more. 365 is one year.
 
 
 
@@ -103,8 +106,8 @@ function checkVersion($filenameCheckVersion, $SERVERCHECKVERSION) {
 	//echo "In function CheckVersion<br>";
 	//echo "Yes it's time to check if your program is uptodate or not<br>";
 	//download the file from the server
-	$serverread = file_get_contents("$SERVERCHECKVERSION"); // download the file from the internet into a variable.
-	$clientread = file_get_contents("$filenameCheckVersion"); // copy the local file into a variable.
+	$serverread = trim(file_get_contents("$SERVERCHECKVERSION")); // download the file from the internet into a variable.
+	$clientread = trim(file_get_contents("$filenameCheckVersion")); // copy the local file into a variable.
 	//echo "serverread $serverread<br>";
 	//echo "clientread $clientread<br>";
 	
@@ -119,7 +122,7 @@ function checkVersion($filenameCheckVersion, $SERVERCHECKVERSION) {
 		return 17;
 	}
 	// now compare the 2 variables to see if they match
-	// strpos ($line, $pattern), so the SERVER is the file to open and Client is the pattern
+	// strpos ($line, $pattern), so the SERVER is the multi-lined variable(in the future) and Client(Version.inf file) is the pattern
 	if (strpos($serverread, $clientread) !== false) {
 		//echo "found a match";
 		// exiting error code 0 ...look at the top for further explanation
@@ -147,12 +150,9 @@ function DealingWithResults($results, $thisDate, $COOKIENAME, $COOKIEEXPIRES, $C
 	}	
 }	
 
-//echo "<b>START</b> If cookie is or is not set START line:" . __LINE__ . " file: " . basename(__FILE__) . "<br>";
-// if the cookie does not exist checkVersion write cookie
 if (!isset($_COOKIE["$COOKIENAME"])) {
 	// cookie does NOT exist
-	//echo " line:" . __LINE__ . " file: " . basename(__FILE__) . "<br>";
-	
+	// if the cookie does not exist checkVersion write cookie accordingly.
 	$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
 	$resultsDealing=DealingWithResults($results, $thisDate, $COOKIENAME, $COOKIEEXPIRES, $COOKIEMESSAGEEXPIRED, $outOfDateMessage);
 	if ($resultsDealing != NULL) {
@@ -161,46 +161,35 @@ if (!isset($_COOKIE["$COOKIENAME"])) {
 	}
 } else {
 	// cookie exist
-	
 	// read the cookie
 	$cookieResults=$_COOKIE["$COOKIENAME"];
-	// subtract todays date from the cookie date
+	// subtract today's date from the cookie date
 	$finalResult=$thisDate-$cookieResults;
 	// if finalResult is greater or equal to $xdays days old, check the version again. 
 	if ($finalResult >= $xdays ) {
 		$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
-		if ($results >= 1) {
-			// message to the user that the program is out of date
-			$outofdate .= $outOfDateMessage;
-			// set cookie to what ever value $COOKIEMESSAGEEXPIRED is.
-			$COOKIEMESSAGE = $COOKIEMESSAGEEXPIRED;
-			setcookie("$COOKIENAME","$COOKIEMESSAGE", $COOKIEEXPIRES);
-		} else {
-			// Your program is Up to date!!!!
-			// set cookie to todays date.
-			$COOKIEMESSAGE="$thisDate";
-			setcookie("$COOKIENAME","$COOKIEMESSAGE", $COOKIEEXPIRES);
-		} 
+		$resultsDealing=DealingWithResults($results, $thisDate, $COOKIENAME, $COOKIEEXPIRES, $COOKIEMESSAGEEXPIRED, $outOfDateMessage);
+		if ($resultsDealing != NULL) {
+			// Your program is out of date notify the user
+			$outofdate .= $resultsDealing;
+		}
 	} else {
-		// this will speed it up if it has already check the file for the day it will not do it again
-		// because the cookie is good enough
+		// this will speed up the program, once a ""Check Version Update"" has occurred.
+		// It checks the cookie instead,and if the date is not larger than $xdays then
+		// then it will not continue to check every time that you run the program on the 1st, 10th, and 20th
 		$testDone=1;
 	}
 }
-//echo "<b>END</b> of if cookie is or is not set END line:" . __LINE__ . " file: " . basename(__FILE__) . "<br>";
 
-// $testDone if the date is 1, 10, or 20 then 
 if ($testDone == 0) {
 	if ($thisDate == $Date1 || $thisDate == $Date2 || $thisDate == $Date3) {
 		$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
-		if ($results >= 1) {
-			$outofdate .= $outOfDateMessage;
-			$COOKIEMESSAGE = $COOKIEMESSAGEEXPIRED;
-			setcookie("$COOKIENAME","$COOKIEMESSAGE", $COOKIEEXPIRES);
-		} else {
-			$COOKIEMESSAGE="$thisDate";
-			setcookie("$COOKIENAME","$COOKIEMESSAGE", $COOKIEEXPIRES);
-		} 
+		$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
+		$resultsDealing=DealingWithResults($results, $thisDate, $COOKIENAME, $COOKIEEXPIRES, $COOKIEMESSAGEEXPIRED, $outOfDateMessage);
+		if ($resultsDealing != NULL) {
+			// Your program is out of date notify the user
+			$outofdate .= $resultsDealing;
+		}
 	}
 }
 ?>
@@ -208,7 +197,7 @@ if ($testDone == 0) {
 <head>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding"><meta charset="utf-8">
-<title>Check Verison</title>
+<title>Check Verison 2</title>
 <script type="text/javascript"></script>
 <style>
 body { background-color: Gainsboro; }
