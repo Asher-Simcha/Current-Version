@@ -8,14 +8,30 @@
 * Date: 05-17-2019
 * Last Modified: 02-19-2019
 */
-// start your php script here
+# // filename: checkVersion2.sh
+# // Copyright (C) 2019 aka Asher Simcha 
+# // This library is free software; you can redistribute it and/or modify it under the
+# // terms of the The 3-Clause BSD License as published by the
+# // Open Source Initiative; version 3
+# 
+# // This library is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# // The 3-Clause BSD License for more details.
+# 
+# // You should have received a copy of The 3-Clause BSD License
+# // see the files The 3-Clause BSD License.txt respectively.  If not, see
+# // <https://opensource.org/licenses/BSD-3-Clause/>.
 
-// web-server location https://asher-simcha.github.io/help/index.html
-//
+# FLAWS
+# I just figured out the if you take out the out check for the $Date1-3
+# date=0101 and the next month is 0201 if $xdays=9 then every month it will want to update
+# if $xdays were to equal lets say 300 then it would check every 3 months.
+	# additional steps would be to change the expiration date of the cookie $COOKIEEXPIRES 
+	# from 31 to 90 or more. 365 is one year 
 
-// if the date is 1 10 20 check to make sure the software is up to date.
-// add cookie. 
-$outofdate=NULL;
+
+
 /*
 EXTRA NOTES:
 =	// this is equals (if it existed before erase the value and this is the new value)
@@ -45,33 +61,36 @@ example:
 # 16 the SERVER's version control file is missing, most likely write permission issues
 # 17 the CLIENT's version control file is missing
 */
-$filenameCheckVersion="Version.inf";
-$SERVERCHECKVERSION="https://asher-simcha.github.io/help/index.html";
-$MAINSITE="https://github.com/Asher-Simcha/help";
-///$serverread = file_get_contents("$SERVER");
+
+$filenameCheckVersion="Version.inf"; // this is the file that it is using to compare with
+$SERVERCHECKVERSION="https://asher-simcha.github.io/help/index.html"; // this is the server location of the file
+$MAINSITE="https://github.com/Asher-Simcha/help"; // this is a link where you want to send your customers for updates.
 
 $resultsDealing=NULL;
 $COOKIENAME="Version";
 
-$COOKIEEXPIRES= time() + (31 * 3600);
-$thisDate = date('md');
+// $COOKIEEXPIRES= time() + (365 * 3600); this cookie expires in one year
+$COOKIEEXPIRES= time() + (31 * 3600); // this cookie expires in 31 days. if a cookie expires it deletes it's self
 //echo "thisDate $thisDate<br>";
 
-
 // dates to check if software is up to date.
+// change to your delight how ever by default it will always check on the 1st of each month --check NOTES or more details
 $Date1 = 1;	// check on the first of the month
 $Date2 = 10; // check on the 10th of the month
 $Date3 = 20; // check on the 20th of the month
 
-$xdays=9; // if cookie is older than x days check to see if the version is uptodate
+$xdays=9; // if cookie is older than xdays check to see if the version is up to date
 
 // if out of date COOKIEMESSAGE is
+// this is where you want to put your OUT of DATE message
 $outOfDateMessage  = "Time to update this program!! It is out of date!!!<br>";
 $outOfDateMessage .= "Please go to: <a target='_new' href='$MAINSITE'>Asher Simcha's Help Program</a><br>";
 $outOfDateMessage .= "And Update your Software<br>";
 
 
-// internal variables
+// internal variables do not change unless!#@!#
+$thisDate = date('md');
+$outofdate=NULL;
 $COOKIEMESSAGEEXPIRED=0;
 $testDone=0;
 $results=0;
@@ -127,8 +146,6 @@ function DealingWithResults($results, $thisDate, $COOKIENAME, $COOKIEEXPIRES, $C
 		return NULL;
 	}	
 }	
-
-
 
 //echo "<b>START</b> If cookie is or is not set START line:" . __LINE__ . " file: " . basename(__FILE__) . "<br>";
 // if the cookie does not exist checkVersion write cookie
@@ -198,10 +215,21 @@ body { background-color: Gainsboro; }
 </style>
 </head>
 <body id="body">
-<center><h1>Check Version</h1></center>
+<center><h1>Check Version 2</h1></center>
 <center><?php if ($outofdate != NULL) { echo "<b>$outofdate</b><br>"; } ?></center>
 <?php if ($outofdate == NULL) { echo "<b>Your System is Up to date! :)</b>"; } ?>
 
 <p>This is an example of how you create a version control for php, if you distribute php code this is a great idea!</p>
+<p>This program creates a cookie, because it takes a few seconds to constantly download a html page to check
+if the version is correct or not.</p>
+<p>
+<h3>Improvements</h3>
+<ul>Added a cookie that keeps the date.<ul>
+<ul>Because of the cookie, being added, it only checks the date once 3 times a month</ul>
+<ul>All Variables are at the top of the code so it is easy to customize!</ul>
+<ul>If Cookie does NOT exist.</ul>
+<ul><ul>checkVersion</ul> <ul>create cookie</ul> <ul>display message to the screen</ul></ul>
+
+</p>
 </body>
 </html>
