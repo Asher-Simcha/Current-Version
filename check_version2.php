@@ -174,7 +174,7 @@ if (!isset($_COOKIE["$COOKIENAME"])) {
 
 // $testDone if the date is 1, 10, or 20 then 
 if ($testDone == 0) {
-	if ($thisDate == 1 || $thisDate == 10 || $thisDate == 20) {
+	if ($thisDate == $Date1 || $thisDate == $Date2 || $thisDate == $Date3) {
 		$results=checkVersion($filenameCheckVersion, $SERVERCHECKVERSION);
 		if ($results >= 1) {
 			$outofdate .= $outOfDateMessage;
